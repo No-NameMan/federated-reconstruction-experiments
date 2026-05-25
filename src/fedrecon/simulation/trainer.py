@@ -9,7 +9,12 @@ from fedrecon.models.matrix_factorization import GlobalMatrixFactorization
 from fedrecon.simulation.evaluator import evaluate_reconstruction
 from fedrecon.simulation.logging import CSVLogger
 from fedrecon.utils.device import get_device
-from fedrecon.utils.paths import find_project_root, make_run_dir, resolve_project_path, save_config
+from fedrecon.utils.paths import (
+    find_project_root,
+    make_run_dir,
+    resolve_project_path,
+    save_config,
+)
 from fedrecon.utils.seed import seed_everything
 
 
@@ -52,8 +57,15 @@ def run_training(config: dict) -> Path:
     logger = CSVLogger(
         run_dir / "metrics_per_round.csv",
         fieldnames=[
-            "round", "train_loss", "val_rmse", "val_mae", "val_accuracy",
-            "round_bytes", "total_bytes", "num_clients", "num_examples",
+            "round",
+            "train_loss",
+            "val_rmse",
+            "val_mae",
+            "val_accuracy",
+            "round_bytes",
+            "total_bytes",
+            "num_clients",
+            "num_examples",
         ],
     )
 
@@ -104,21 +116,27 @@ def run_training(config: dict) -> Path:
                 max_clients=int(config["evaluation"]["max_eval_clients"]),
             )
 
-        logger.log({
-            "round": round_idx,
-            "train_loss": result.mean_client_loss,
-            "val_rmse": val_metrics["rmse"],
-            "val_mae": val_metrics["mae"],
-            "val_accuracy": val_metrics["accuracy"],
-            "round_bytes": result.transmitted_bytes,
-            "total_bytes": total_bytes,
-            "num_clients": result.num_clients,
-            "num_examples": result.num_examples,
-        })
+        logger.log(
+            {
+                "round": round_idx,
+                "train_loss": result.mean_client_loss,
+                "val_rmse": val_metrics["rmse"],
+                "val_mae": val_metrics["mae"],
+                "val_accuracy": val_metrics["accuracy"],
+                "round_bytes": result.transmitted_bytes,
+                "total_bytes": total_bytes,
+                "num_clients": result.num_clients,
+                "num_examples": result.num_examples,
+            }
+        )
 
         if round_idx % int(config["logging"]["checkpoint_every"]) == 0:
             torch.save(
-                {"round": round_idx, "model_state": model.state_dict(), "config": config},
+                {
+                    "round": round_idx,
+                    "model_state": model.state_dict(),
+                    "config": config,
+                },
                 run_dir / f"checkpoint_round_{round_idx}.pt",
             )
 

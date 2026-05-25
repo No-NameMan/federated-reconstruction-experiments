@@ -1,0 +1,7 @@
+base_config: configs/quick_colab_cpu.yaml
+
+sweep:
+  name: sweep_reconstruction_steps_quick
+  parameter: reconstruction.steps
+  values: [0, 1, 2, 5, 10]
+  seeds: [42]
