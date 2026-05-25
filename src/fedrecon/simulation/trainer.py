@@ -72,6 +72,20 @@ def run_training(config: dict) -> Path:
     total_bytes = 0
     rounds = int(config["federated"]["rounds"])
 
+    eval_reconstruction_steps = int(
+        config["evaluation"].get(
+            "reconstruction_steps",
+            config["reconstruction"]["steps"],
+        )
+    )
+
+    eval_reconstruction_lr = float(
+        config["evaluation"].get(
+            "reconstruction_lr",
+            config["reconstruction"]["lr"],
+        )
+    )
+
     for round_idx in trange(1, rounds + 1, desc="FEDRECON rounds"):
         selected_ids = sampler.sample()
         selected_ids = apply_dropout(
@@ -109,8 +123,8 @@ def run_training(config: dict) -> Path:
                 clients=data.val_clients.values(),
                 support_fraction=float(data_cfg["support_fraction"]),
                 split_seed=int(data_cfg["split_seed"]) + 10_000 + round_idx,
-                reconstruction_steps=int(config["reconstruction"]["steps"]),
-                reconstruction_lr=float(config["reconstruction"]["lr"]),
+                reconstruction_steps=eval_reconstruction_steps,
+                reconstruction_lr=eval_reconstruction_lr,
                 use_user_bias=bool(model_cfg["use_user_bias"]),
                 init_std=float(model_cfg["init_std"]),
                 max_clients=int(config["evaluation"]["max_eval_clients"]),
