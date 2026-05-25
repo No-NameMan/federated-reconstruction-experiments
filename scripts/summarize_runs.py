@@ -21,6 +21,22 @@ def load_yaml(path: str | Path) -> dict[str, Any]:
         return yaml.safe_load(f)
 
 
+def _valid_metric_rows(metrics: pd.DataFrame, metric: str) -> pd.DataFrame:
+    valid = metrics.dropna(subset=[metric]).copy()
+    valid = valid[valid[metric] != ""]
+    if valid.empty:
+        return valid
+    valid[metric] = valid[metric].astype(float)
+    return valid
+
+
+def _metric_at_or_before_round(valid: pd.DataFrame, metric: str, round_value: int) -> float:
+    subset = valid[valid["round"].astype(int) <= round_value]
+    if subset.empty:
+        return float("nan")
+    return float(subset.iloc[-1][metric])
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--runs_glob", type=str, required=True)
@@ -32,6 +48,13 @@ def main() -> None:
         default=["reconstruction.steps"],
     )
     parser.add_argument("--metric", type=str, default="val_rmse")
+    parser.add_argument(
+        "--rounds",
+        type=int,
+        nargs="*",
+        default=[0, 5, 10, 15, 20, 25, 30],
+        help="Round checkpoints to include in the summary.",
+    )
     args = parser.parse_args()
 
     run_dirs = sorted(glob.glob(args.runs_glob))
@@ -51,24 +74,31 @@ def main() -> None:
         metrics = pd.read_csv(metrics_path)
         config = load_yaml(config_path)
 
-        valid = metrics.dropna(subset=[args.metric])
-        valid = valid[valid[args.metric] != ""]
-
+        valid = _valid_metric_rows(metrics, args.metric)
         if valid.empty:
             continue
 
-        valid[args.metric] = valid[args.metric].astype(float)
-
         final = valid.iloc[-1]
         best = valid.loc[valid[args.metric].idxmin()]
+        first = valid.iloc[0]
 
         row: dict[str, Any] = {
             "run_dir": run_dir.name,
+            "first_round": int(first["round"]),
             "final_round": int(final["round"]),
+            f"first_{args.metric}": float(first[args.metric]),
             f"final_{args.metric}": float(final[args.metric]),
             f"best_{args.metric}": float(best[args.metric]),
             f"best_{args.metric}_round": int(best["round"]),
+            f"delta_{args.metric}_first_to_final": float(first[args.metric]) - float(final[args.metric]),
         }
+
+        for round_value in args.rounds:
+            row[f"{args.metric}@{round_value}"] = _metric_at_or_before_round(
+                valid,
+                args.metric,
+                round_value,
+            )
 
         for col in ["val_mae", "val_accuracy", "train_loss", "total_bytes"]:
             if col in final.index and final[col] != "":
@@ -81,8 +111,10 @@ def main() -> None:
 
     summary = pd.DataFrame(rows)
 
-    sort_cols = args.label_params if args.label_params else [f"final_{args.metric}"]
-    summary = summary.sort_values(sort_cols).reset_index(drop=True)
+    if args.label_params:
+        summary = summary.sort_values(args.label_params).reset_index(drop=True)
+    else:
+        summary = summary.sort_values(f"final_{args.metric}").reset_index(drop=True)
 
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
