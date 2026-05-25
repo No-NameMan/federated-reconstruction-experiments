@@ -47,6 +47,8 @@ compression:
 evaluation:
   eval_every: 5
   max_eval_clients: 100
+  reconstruction_lr: 0.1
+  eval_at_start: true
 
 logging:
   checkpoint_every: 10
