@@ -19,6 +19,7 @@ model:
   embedding_dim: 32
   use_user_bias: false
   use_item_bias: false
+  use_global_bias: false
   init_std: 0.05
 
 federated:
@@ -49,6 +50,7 @@ evaluation:
   max_eval_clients: 100
   reconstruction_steps: 10
   reconstruction_lr: 0.1
+  eval_at_start: true
 
 logging:
   checkpoint_every: 10

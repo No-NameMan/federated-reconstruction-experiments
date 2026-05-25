@@ -45,6 +45,7 @@ def run_training(config: dict) -> Path:
         num_items=data.num_items,
         embedding_dim=int(model_cfg["embedding_dim"]),
         use_item_bias=bool(model_cfg["use_item_bias"]),
+        use_global_bias=bool(model_cfg.get("use_global_bias", True)),
         init_std=float(model_cfg["init_std"]),
     ).to(device)
 
@@ -69,9 +70,6 @@ def run_training(config: dict) -> Path:
         ],
     )
 
-    total_bytes = 0
-    rounds = int(config["federated"]["rounds"])
-
     eval_reconstruction_steps = int(
         config["evaluation"].get(
             "reconstruction_steps",
@@ -85,6 +83,37 @@ def run_training(config: dict) -> Path:
             config["reconstruction"]["lr"],
         )
     )
+
+    total_bytes = 0
+
+    if bool(config["evaluation"].get("eval_at_start", True)):
+        val_metrics = evaluate_reconstruction(
+            model=model,
+            clients=data.val_clients.values(),
+            support_fraction=float(data_cfg["support_fraction"]),
+            split_seed=int(data_cfg["split_seed"]) + 10_000,
+            reconstruction_steps=eval_reconstruction_steps,
+            reconstruction_lr=eval_reconstruction_lr,
+            use_user_bias=bool(model_cfg["use_user_bias"]),
+            init_std=float(model_cfg["init_std"]),
+            max_clients=int(config["evaluation"]["max_eval_clients"]),
+        )
+
+        logger.log(
+            {
+                "round": 0,
+                "train_loss": "",
+                "val_rmse": val_metrics["rmse"],
+                "val_mae": val_metrics["mae"],
+                "val_accuracy": val_metrics["accuracy"],
+                "round_bytes": 0,
+                "total_bytes": total_bytes,
+                "num_clients": 0,
+                "num_examples": 0,
+            }
+        )
+
+    rounds = int(config["federated"]["rounds"])
 
     for round_idx in trange(1, rounds + 1, desc="FEDRECON rounds"):
         selected_ids = sampler.sample()
