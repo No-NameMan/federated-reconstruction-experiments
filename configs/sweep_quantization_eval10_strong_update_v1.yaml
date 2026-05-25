@@ -1,0 +1,7 @@
+base_config: configs/quick_colab_cpu_eval10_strong_update.yaml
+
+sweep:
+  name: sweep_quantization_eval10_strong_update_v1
+  parameter: compression.method
+  values: [none, fp16, int8, int4, sign]
+  seeds: [42, 43, 44]
