@@ -1,0 +1,10 @@
+base_config: configs/quick_colab_cpu_eval10.yaml
+
+sweep:
+  name: sweep_client_update_steps_lr_eval10_medium_v1
+  parameters:
+    - name: client_update.steps
+      values: [1, 2, 5, 10]
+    - name: client_update.lr
+      values: [0.01, 0.03, 0.05, 0.1, 0.2]
+  seeds: [42, 43, 44]
