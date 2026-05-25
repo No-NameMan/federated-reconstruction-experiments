@@ -9,7 +9,7 @@ from fedrecon.models.matrix_factorization import GlobalMatrixFactorization
 from fedrecon.simulation.evaluator import evaluate_reconstruction
 from fedrecon.simulation.logging import CSVLogger
 from fedrecon.utils.device import get_device
-from fedrecon.utils.paths import make_run_dir, save_config
+from fedrecon.utils.paths import find_project_root, make_run_dir, resolve_project_path, save_config
 from fedrecon.utils.seed import seed_everything
 
 
@@ -17,7 +17,11 @@ def run_training(config: dict) -> Path:
     seed = int(config["experiment"]["seed"])
     seed_everything(seed)
 
-    run_dir = make_run_dir(config["experiment"]["output_dir"], config["experiment"]["name"])
+    project_root = find_project_root()
+    output_dir = resolve_project_path(config["experiment"]["output_dir"], project_root)
+    data_dir = resolve_project_path(config["data"]["data_dir"], project_root)
+
+    run_dir = make_run_dir(output_dir, config["experiment"]["name"])
     save_config(config, run_dir)
 
     device = get_device(prefer_cuda=True)
@@ -25,7 +29,7 @@ def run_training(config: dict) -> Path:
 
     data_cfg = config["data"]
     data = load_movielens_1m_clients(
-        data_dir=data_cfg["data_dir"],
+        data_dir=data_dir,
         min_ratings_per_user=int(data_cfg["min_ratings_per_user"]),
         user_split=data_cfg["user_split"],
         seed=int(data_cfg["split_seed"]),
