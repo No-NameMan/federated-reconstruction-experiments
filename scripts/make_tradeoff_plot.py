@@ -47,7 +47,9 @@ def main() -> None:
 
         metrics = pd.read_csv(metrics_path)
         metrics = metrics.dropna(subset=[args.x_metric, args.y_metric])
-        metrics = metrics[(metrics[args.x_metric] != "") & (metrics[args.y_metric] != "")]
+        metrics = metrics[
+            (metrics[args.x_metric] != "") & (metrics[args.y_metric] != "")
+        ]
 
         if metrics.empty:
             continue
