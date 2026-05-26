@@ -1,0 +1,7 @@
+base_config: configs/fedrecon_strong_100r.yaml
+
+sweep:
+  name: sweep_fedrecon_strong_100r_v1
+  parameter: federated.client_dropout_prob
+  values: [0.0]
+  seeds: [42, 43, 44]
