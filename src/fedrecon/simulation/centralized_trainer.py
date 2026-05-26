@@ -8,6 +8,8 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 from tqdm import trange
 
+import time
+
 from fedrecon.baselines.centralized_mf import (
     build_train_tensors,
     get_centralized_optimizer,
@@ -62,6 +64,8 @@ def _evaluate_centralized_reconeval(
 def run_centralized_training(config: dict[str, Any]) -> Path:
     """Train centralized MF and evaluate item/global parameters via RECONEVAL."""
     seed_everything(int(config["experiment"]["seed"]))
+
+    start_time = time.perf_counter()
 
     project_root = find_project_root()
     output_dir = resolve_project_path(config["experiment"]["output_dir"], project_root)
@@ -182,10 +186,13 @@ def run_centralized_training(config: dict[str, Any]) -> Path:
     val_client_metrics.to_csv(run_dir / "val_client_metrics.csv", index=False)
     test_client_metrics.to_csv(run_dir / "test_client_metrics.csv", index=False)
 
+    elapsed_seconds = time.perf_counter() - start_time
+
     final_metrics = {
         "val": final_val_metrics,
         "test": final_test_metrics,
         "epochs": epochs,
+        "elapsed_seconds": elapsed_seconds,
         "run_dir": str(run_dir),
         "baseline": "centralized_mf_reconeval",
     }

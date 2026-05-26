@@ -6,6 +6,8 @@ from pathlib import Path
 import torch
 from tqdm import trange
 
+import time
+
 from fedrecon.algorithms.fedavg_global import run_fedavg_global_round
 from fedrecon.data.movielens import load_movielens_1m_clients
 from fedrecon.data.samplers import ClientSampler, apply_dropout
@@ -35,6 +37,8 @@ def _parse_max_final_eval_clients(config: dict) -> int | None:
 def run_fedavg_global_training(config: dict) -> Path:
     seed = int(config["experiment"]["seed"])
     seed_everything(seed)
+
+    start_time = time.perf_counter()
 
     project_root = find_project_root()
     output_dir = resolve_project_path(config["experiment"]["output_dir"], project_root)
@@ -238,11 +242,14 @@ def run_fedavg_global_training(config: dict) -> Path:
     val_client_metrics.to_csv(run_dir / "val_client_metrics.csv", index=False)
     test_client_metrics.to_csv(run_dir / "test_client_metrics.csv", index=False)
 
+    elapsed_seconds = time.perf_counter() - start_time
+    
     final_metrics = {
         "val": final_val_metrics,
         "test": final_test_metrics,
         "total_bytes": total_bytes,
         "rounds": rounds,
+        "elapsed_seconds": elapsed_seconds,
         "run_dir": str(run_dir),
         "baseline": "fedavg_global_only_reconeval",
     }

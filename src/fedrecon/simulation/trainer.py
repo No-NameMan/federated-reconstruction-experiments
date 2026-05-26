@@ -2,6 +2,7 @@ from __future__ import annotations
 from pathlib import Path
 import torch
 import json
+import time
 from tqdm import trange
 from fedrecon.algorithms.fedrecon import run_fedrecon_round
 from fedrecon.data.movielens import load_movielens_1m_clients
@@ -25,6 +26,8 @@ from fedrecon.utils.seed import seed_everything
 def run_training(config: dict) -> Path:
     seed = int(config["experiment"]["seed"])
     seed_everything(seed)
+
+    start_time = time.perf_counter()
 
     project_root = find_project_root()
     output_dir = resolve_project_path(config["experiment"]["output_dir"], project_root)
@@ -192,9 +195,14 @@ def run_training(config: dict) -> Path:
         run_dir / "final_model.pt",
     )
 
-    final_eval_max_clients_raw = config["evaluation"].get("max_final_eval_clients", None)
+    final_eval_max_clients_raw = config["evaluation"].get(
+        "max_final_eval_clients", None
+    )
 
-    if final_eval_max_clients_raw is None or str(final_eval_max_clients_raw).lower() == "all":
+    if (
+        final_eval_max_clients_raw is None
+        or str(final_eval_max_clients_raw).lower() == "all"
+    ):
         max_final_eval_clients = None
     else:
         max_final_eval_clients = int(final_eval_max_clients_raw)
@@ -226,11 +234,14 @@ def run_training(config: dict) -> Path:
     val_client_metrics.to_csv(run_dir / "val_client_metrics.csv", index=False)
     test_client_metrics.to_csv(run_dir / "test_client_metrics.csv", index=False)
 
+    elapsed_seconds = time.perf_counter() - start_time
+
     final_metrics = {
         "val": final_val_metrics,
         "test": final_test_metrics,
         "total_bytes": total_bytes,
         "rounds": rounds,
+        "elapsed_seconds": elapsed_seconds,
         "run_dir": str(run_dir),
     }
 
@@ -239,6 +250,6 @@ def run_training(config: dict) -> Path:
 
     print("Final validation metrics:", final_val_metrics)
     print("Final test metrics:", final_test_metrics)
-    
+
     print(f"Run saved to: {run_dir}")
     return run_dir

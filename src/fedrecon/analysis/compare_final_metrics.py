@@ -42,6 +42,8 @@ def load_final_metrics(run_dir: str | Path, label: str | None = None) -> dict[st
     if "total_bytes" in metrics:
         row["total_bytes"] = metrics["total_bytes"]
         row["total_mb"] = metrics["total_bytes"] / (1024 * 1024)
+    if "elapsed_seconds" in metrics:
+        row["elapsed_seconds"] = metrics["elapsed_seconds"]
 
     if config_path.exists():
         row["has_config"] = True
@@ -74,6 +76,7 @@ def compare_final_metrics(run_specs: list[str], output: str | Path) -> pd.DataFr
         "val_accuracy",
         "rounds",
         "epochs",
+        "elapsed_seconds",
         "total_mb",
         "test_num_clients",
         "test_num_examples",
