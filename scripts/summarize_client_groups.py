@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import glob
+import math
 import sys
 from pathlib import Path
 from typing import Any
@@ -19,6 +20,41 @@ from fedrecon.utils.config import get_by_path
 def load_yaml(path: str | Path) -> dict[str, Any]:
     with Path(path).open("r", encoding="utf-8") as f:
         return yaml.safe_load(f)
+
+
+def summarize_group(group: pd.DataFrame) -> dict[str, float | int]:
+    total_query = float(group["num_query_examples"].sum())
+
+    if total_query > 0:
+        pooled_mse = (
+            (group["num_query_examples"] * (group["rmse"] ** 2)).sum()
+            / total_query
+        )
+        pooled_rmse = math.sqrt(float(pooled_mse))
+
+        weighted_mae = float(
+            (group["num_query_examples"] * group["mae"]).sum() / total_query
+        )
+        weighted_accuracy = float(
+            (group["num_query_examples"] * group["accuracy"]).sum() / total_query
+        )
+    else:
+        pooled_rmse = float("nan")
+        weighted_mae = float("nan")
+        weighted_accuracy = float("nan")
+
+    return {
+        "n_clients": int(group["client_id"].count()),
+        "total_query_examples": int(group["num_query_examples"].sum()),
+        "mean_num_examples": float(group["num_examples_total"].mean()),
+        "mean_rmse": float(group["rmse"].mean()),
+        "median_rmse": float(group["rmse"].median()),
+        "pooled_rmse": pooled_rmse,
+        "mean_mae": float(group["mae"].mean()),
+        "weighted_mae": weighted_mae,
+        "mean_accuracy": float(group["accuracy"].mean()),
+        "weighted_accuracy": weighted_accuracy,
+    }
 
 
 def main() -> None:
@@ -57,30 +93,12 @@ def main() -> None:
             include_lowest=True,
         )
 
-        grouped = (
-            df.groupby("rating_count_group", observed=True)
-            .agg(
-                n_clients=("client_id", "count"),
-                mean_num_examples=("num_examples_total", "mean"),
-                mean_rmse=("rmse", "mean"),
-                median_rmse=("rmse", "median"),
-                mean_mae=("mae", "mean"),
-                mean_accuracy=("accuracy", "mean"),
-            )
-            .reset_index()
-        )
-
-        for _, row in grouped.iterrows():
+        for group_name, group in df.groupby("rating_count_group", observed=True):
             out = {
                 "run_dir": run_dir.name,
                 "split": args.split,
-                "rating_count_group": str(row["rating_count_group"]),
-                "n_clients": int(row["n_clients"]),
-                "mean_num_examples": float(row["mean_num_examples"]),
-                "mean_rmse": float(row["mean_rmse"]),
-                "median_rmse": float(row["median_rmse"]),
-                "mean_mae": float(row["mean_mae"]),
-                "mean_accuracy": float(row["mean_accuracy"]),
+                "rating_count_group": str(group_name),
+                **summarize_group(group),
             }
 
             for param in args.label_params:
@@ -89,8 +107,18 @@ def main() -> None:
             rows.append(out)
 
     summary = pd.DataFrame(rows)
-    sort_cols = args.label_params + ["rating_count_group"]
-    summary = summary.sort_values(sort_cols).reset_index(drop=True)
+
+    group_order = {
+        "<=50": 0,
+        "51-100": 1,
+        "101-200": 2,
+        "201-500": 3,
+        ">500": 4,
+    }
+    summary["_group_order"] = summary["rating_count_group"].map(group_order)
+
+    sort_cols = args.label_params + ["_group_order"]
+    summary = summary.sort_values(sort_cols).drop(columns=["_group_order"]).reset_index(drop=True)
 
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
