@@ -1,0 +1,10 @@
+base_config: configs/quick_colab_cpu_eval10_strong_update.yaml
+
+sweep:
+  name: sweep_dropout_clients_stress_v1
+  parameters:
+    - name: federated.clients_per_round
+      values: [10, 25]
+    - name: federated.client_dropout_prob
+      values: [0.0, 0.5, 0.7, 0.8]
+  seeds: [42, 43, 44]
