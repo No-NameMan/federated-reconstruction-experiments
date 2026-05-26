@@ -51,6 +51,7 @@ evaluation:
   reconstruction_steps: 10
   reconstruction_lr: 0.1
   eval_at_start: true
+  max_final_eval_clients: all
 
 logging:
   checkpoint_every: 10

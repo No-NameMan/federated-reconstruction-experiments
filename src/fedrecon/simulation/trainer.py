@@ -1,12 +1,16 @@
 from __future__ import annotations
 from pathlib import Path
 import torch
+import json
 from tqdm import trange
 from fedrecon.algorithms.fedrecon import run_fedrecon_round
 from fedrecon.data.movielens import load_movielens_1m_clients
 from fedrecon.data.samplers import ClientSampler, apply_dropout
 from fedrecon.models.matrix_factorization import GlobalMatrixFactorization
-from fedrecon.simulation.evaluator import evaluate_reconstruction
+from fedrecon.simulation.evaluator import (
+    evaluate_reconstruction,
+    evaluate_reconstruction_detailed,
+)
 from fedrecon.simulation.logging import CSVLogger
 from fedrecon.utils.device import get_device
 from fedrecon.utils.paths import (
@@ -187,5 +191,52 @@ def run_training(config: dict) -> Path:
         {"round": rounds, "model_state": model.state_dict(), "config": config},
         run_dir / "final_model.pt",
     )
+        final_eval_max_clients_raw = config["evaluation"].get("max_final_eval_clients", None)
+
+    if final_eval_max_clients_raw is None or str(final_eval_max_clients_raw).lower() == "all":
+        max_final_eval_clients = None
+    else:
+        max_final_eval_clients = int(final_eval_max_clients_raw)
+
+    final_val_metrics, val_client_metrics = evaluate_reconstruction_detailed(
+        model=model,
+        clients=data.val_clients.values(),
+        support_fraction=float(data_cfg["support_fraction"]),
+        split_seed=int(data_cfg["split_seed"]) + 20_000,
+        reconstruction_steps=eval_reconstruction_steps,
+        reconstruction_lr=eval_reconstruction_lr,
+        use_user_bias=bool(model_cfg["use_user_bias"]),
+        init_std=float(model_cfg["init_std"]),
+        max_clients=max_final_eval_clients,
+    )
+
+    final_test_metrics, test_client_metrics = evaluate_reconstruction_detailed(
+        model=model,
+        clients=data.test_clients.values(),
+        support_fraction=float(data_cfg["support_fraction"]),
+        split_seed=int(data_cfg["split_seed"]) + 30_000,
+        reconstruction_steps=eval_reconstruction_steps,
+        reconstruction_lr=eval_reconstruction_lr,
+        use_user_bias=bool(model_cfg["use_user_bias"]),
+        init_std=float(model_cfg["init_std"]),
+        max_clients=max_final_eval_clients,
+    )
+
+    val_client_metrics.to_csv(run_dir / "val_client_metrics.csv", index=False)
+    test_client_metrics.to_csv(run_dir / "test_client_metrics.csv", index=False)
+
+    final_metrics = {
+        "val": final_val_metrics,
+        "test": final_test_metrics,
+        "total_bytes": total_bytes,
+        "rounds": rounds,
+        "run_dir": str(run_dir),
+    }
+
+    with (run_dir / "final_metrics.json").open("w", encoding="utf-8") as f:
+        json.dump(final_metrics, f, indent=2, ensure_ascii=False)
+
+    print("Final validation metrics:", final_val_metrics)
+    print("Final test metrics:", final_test_metrics)
     print(f"Run saved to: {run_dir}")
     return run_dir
