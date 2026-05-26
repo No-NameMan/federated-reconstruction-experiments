@@ -191,7 +191,8 @@ def run_training(config: dict) -> Path:
         {"round": rounds, "model_state": model.state_dict(), "config": config},
         run_dir / "final_model.pt",
     )
-        final_eval_max_clients_raw = config["evaluation"].get("max_final_eval_clients", None)
+
+    final_eval_max_clients_raw = config["evaluation"].get("max_final_eval_clients", None)
 
     if final_eval_max_clients_raw is None or str(final_eval_max_clients_raw).lower() == "all":
         max_final_eval_clients = None
@@ -238,5 +239,6 @@ def run_training(config: dict) -> Path:
 
     print("Final validation metrics:", final_val_metrics)
     print("Final test metrics:", final_test_metrics)
+    
     print(f"Run saved to: {run_dir}")
     return run_dir
