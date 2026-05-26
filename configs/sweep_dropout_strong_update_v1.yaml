@@ -1,0 +1,7 @@
+base_config: configs/quick_colab_cpu_eval10_strong_update.yaml
+
+sweep:
+  name: sweep_dropout_strong_update_v1
+  parameter: federated.client_dropout_prob
+  values: [0.0, 0.1, 0.3, 0.5]
+  seeds: [42, 43, 44]
