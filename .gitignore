@@ -11,5 +11,7 @@ results/processed/
 results/figures/
 results/tables/
 
+reports/
+
 *.pt
 *.pth
