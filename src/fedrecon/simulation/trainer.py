@@ -23,6 +23,17 @@ from fedrecon.utils.paths import (
 from fedrecon.utils.seed import seed_everything
 
 
+def _parse_optional_int(value) -> int | None:
+    if value is None:
+        return None
+    if isinstance(value, str) and value.lower() in {"none", "all", "full"}:
+        return None
+    value = int(value)
+    if value <= 0:
+        return None
+    return value
+
+
 def run_training(config: dict) -> Path:
     seed = int(config["experiment"]["seed"])
     seed_everything(seed)
@@ -91,6 +102,21 @@ def run_training(config: dict) -> Path:
         )
     )
 
+    reconstruction_batch_size = _parse_optional_int(
+        config["reconstruction"].get("batch_size", None)
+    )
+
+    client_update_batch_size = _parse_optional_int(
+        config["client_update"].get("batch_size", None)
+    )
+
+    eval_reconstruction_batch_size = _parse_optional_int(
+        config["evaluation"].get(
+            "reconstruction_batch_size",
+            config["reconstruction"].get("batch_size", None),
+        )
+    )
+
     total_bytes = 0
 
     if bool(config["evaluation"].get("eval_at_start", True)):
@@ -104,6 +130,7 @@ def run_training(config: dict) -> Path:
             use_user_bias=bool(model_cfg["use_user_bias"]),
             init_std=float(model_cfg["init_std"]),
             max_clients=int(config["evaluation"]["max_eval_clients"]),
+            reconstruction_batch_size=eval_reconstruction_batch_size,
         )
 
         logger.log(
@@ -149,6 +176,8 @@ def run_training(config: dict) -> Path:
             use_user_bias=bool(model_cfg["use_user_bias"]),
             init_std=float(model_cfg["init_std"]),
             compression_method=compression_method,
+            reconstruction_batch_size=reconstruction_batch_size,
+            client_update_batch_size=client_update_batch_size,
         )
         total_bytes += result.transmitted_bytes
 
@@ -164,6 +193,7 @@ def run_training(config: dict) -> Path:
                 use_user_bias=bool(model_cfg["use_user_bias"]),
                 init_std=float(model_cfg["init_std"]),
                 max_clients=int(config["evaluation"]["max_eval_clients"]),
+                reconstruction_batch_size=eval_reconstruction_batch_size,
             )
 
         logger.log(
@@ -217,6 +247,7 @@ def run_training(config: dict) -> Path:
         use_user_bias=bool(model_cfg["use_user_bias"]),
         init_std=float(model_cfg["init_std"]),
         max_clients=max_final_eval_clients,
+        reconstruction_batch_size=eval_reconstruction_batch_size,
     )
 
     final_test_metrics, test_client_metrics = evaluate_reconstruction_detailed(
@@ -229,6 +260,7 @@ def run_training(config: dict) -> Path:
         use_user_bias=bool(model_cfg["use_user_bias"]),
         init_std=float(model_cfg["init_std"]),
         max_clients=max_final_eval_clients,
+        reconstruction_batch_size=eval_reconstruction_batch_size,
     )
 
     val_client_metrics.to_csv(run_dir / "val_client_metrics.csv", index=False)

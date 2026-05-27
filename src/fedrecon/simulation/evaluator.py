@@ -35,6 +35,7 @@ def evaluate_reconstruction_detailed(
     use_user_bias: bool,
     init_std: float,
     max_clients: int | None = None,
+    reconstruction_batch_size: int | None = None,
 ) -> tuple[dict[str, float], pd.DataFrame]:
     preds: list[torch.Tensor] = []
     targets: list[torch.Tensor] = []
@@ -57,6 +58,7 @@ def evaluate_reconstruction_detailed(
             lr=reconstruction_lr,
             use_user_bias=use_user_bias,
             init_std=init_std,
+            batch_size=reconstruction_batch_size,
         )
 
         pred, target = _evaluate_query(model, local, split.query)

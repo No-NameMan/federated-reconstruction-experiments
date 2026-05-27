@@ -1,7 +1,10 @@
 from __future__ import annotations
 import torch
 from fedrecon.data.client_dataset import ClientDataset
-from fedrecon.models.matrix_factorization import GlobalMatrixFactorization, LocalUserParams
+from fedrecon.models.matrix_factorization import (
+    GlobalMatrixFactorization,
+    LocalUserParams,
+)
 
 
 def initialize_local_user_params(
@@ -10,10 +13,30 @@ def initialize_local_user_params(
     use_user_bias: bool = True,
     init_std: float = 0.05,
 ) -> LocalUserParams:
-    user_embedding = torch.empty(embedding_dim, device=device).normal_(mean=0.0, std=init_std)
+    user_embedding = torch.empty(embedding_dim, device=device).normal_(
+        mean=0.0, std=init_std
+    )
     user_embedding.requires_grad_(True)
-    user_bias = torch.zeros((), device=device, requires_grad=True) if use_user_bias else None
+    user_bias = (
+        torch.zeros((), device=device, requires_grad=True) if use_user_bias else None
+    )
     return LocalUserParams(user_embedding=user_embedding, user_bias=user_bias)
+
+
+def _sample_batch_indices(
+    n: int,
+    batch_size: int | None,
+    device: torch.device,
+) -> torch.Tensor:
+    if batch_size is None or batch_size <= 0 or batch_size >= n:
+        return torch.arange(n, device=device)
+
+    return torch.randint(
+        low=0,
+        high=n,
+        size=(batch_size,),
+        device=device,
+    )
 
 
 def reconstruct_local_params(
@@ -23,10 +46,13 @@ def reconstruct_local_params(
     lr: float,
     use_user_bias: bool,
     init_std: float,
+    batch_size: int | None = None,
 ) -> LocalUserParams:
     device = next(model.parameters()).device
     support = support.to(device)
-    local = initialize_local_user_params(model.embedding_dim, device, use_user_bias, init_std)
+    local = initialize_local_user_params(
+        model.embedding_dim, device, use_user_bias, init_std
+    )
 
     params = [local.user_embedding]
     if local.user_bias is not None:
@@ -39,8 +65,13 @@ def reconstruct_local_params(
 
     for _ in range(steps):
         optimizer.zero_grad(set_to_none=True)
-        pred = model.predict(support.item_ids, local)
-        loss = torch.mean((pred - support.ratings) ** 2)
+        idx = _sample_batch_indices(
+            n=len(support),
+            batch_size=batch_size,
+            device=device,
+        )
+        pred = model.predict(support.item_ids[idx], local)
+        loss = torch.mean((pred - support.ratings[idx]) ** 2)
         loss.backward()
         optimizer.step()
 

@@ -1,0 +1,12 @@
+base_config: configs/fedrecon_paperlike_100r.yaml
+
+sweep:
+  name: sweep_fedrecon_paperlike_100r_v1
+  parameters:
+    - name: reconstruction.lr
+      values: [0.1, 0.5]
+    - name: client_update.lr
+      values: [0.1, 0.5]
+    - name: server.lr
+      values: [0.5, 1.0]
+  seeds: [42]

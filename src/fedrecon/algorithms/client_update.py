@@ -2,7 +2,11 @@ from __future__ import annotations
 import copy
 import torch
 from fedrecon.data.client_dataset import ClientDataset
-from fedrecon.models.matrix_factorization import GlobalMatrixFactorization, LocalUserParams
+from fedrecon.models.matrix_factorization import (
+    GlobalMatrixFactorization,
+    LocalUserParams,
+)
+from fedrecon.algorithms.reconstruction import _sample_batch_indices
 
 
 def compute_client_delta(
@@ -11,6 +15,7 @@ def compute_client_delta(
     query: ClientDataset,
     steps: int,
     lr: float,
+    batch_size: int | None = None,
 ) -> tuple[dict[str, torch.Tensor], int, float]:
     device = next(global_model.parameters()).device
     query = query.to(device)
@@ -22,8 +27,13 @@ def compute_client_delta(
 
     for _ in range(steps):
         optimizer.zero_grad(set_to_none=True)
-        pred = client_model.predict(query.item_ids, local)
-        loss = torch.mean((pred - query.ratings) ** 2)
+        idx = _sample_batch_indices(
+            n=len(query),
+            batch_size=batch_size,
+            device=device,
+        )
+        pred = client_model.predict(query.item_ids[idx], local)
+        loss = torch.mean((pred - query.ratings[idx]) ** 2)
         loss.backward()
         optimizer.step()
         last_loss = float(loss.detach().cpu())
