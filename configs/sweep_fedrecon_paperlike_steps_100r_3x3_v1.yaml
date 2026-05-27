@@ -1,0 +1,10 @@
+base_config: configs/fedrecon_paperlike_100r_bestlr_eval50.yaml
+
+sweep:
+  name: sweep_fedrecon_paperlike_steps_100r_3x3_v1
+  parameters:
+    - name: reconstruction.steps
+      values: [10, 25, 50]
+    - name: client_update.steps
+      values: [10, 25, 50]
+  seeds: [42]
