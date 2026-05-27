@@ -116,6 +116,7 @@ def evaluate_reconstruction(
     use_user_bias: bool,
     init_std: float,
     max_clients: int | None = None,
+    reconstruction_batch_size: int | None = None,
 ) -> dict[str, float]:
     metrics, _ = evaluate_reconstruction_detailed(
         model=model,
@@ -127,5 +128,6 @@ def evaluate_reconstruction(
         use_user_bias=use_user_bias,
         init_std=init_std,
         max_clients=max_clients,
+        reconstruction_batch_size=reconstruction_batch_size,
     )
     return metrics
