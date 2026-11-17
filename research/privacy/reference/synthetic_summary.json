@@ -1,0 +1,58 @@
+{
+  "status": "PASS",
+  "runtime_seconds": 7.3519302000058815,
+  "full_batch": {
+    "float64": {
+      "cases": 240,
+      "relative_ratings_exact": 240,
+      "single_absolute_candidate": 96,
+      "max_p_relative_l2": 9.499492191722679e-15,
+      "max_identity_max_abs": 3.5388358909926865e-16,
+      "max_continuous_max_abs": 3.552713678800501e-15,
+      "max_residual_recurrence_max_abs": 2.220446049250313e-15,
+      "max_independent_matrix_e0_max_abs": 1.4654943925052066e-14,
+      "max_global_bias_sum_error": 1.942890293094024e-15,
+      "max_inverse_condition": 5.712839949671146,
+      "max_inverse_gain": 123.33333333333336
+    },
+    "float32": {
+      "cases": 240,
+      "relative_ratings_exact": 240,
+      "single_absolute_candidate": 96,
+      "max_p_relative_l2": 7.4496838276253e-06,
+      "max_identity_max_abs": 2.2430457952138383e-07,
+      "max_continuous_max_abs": 1.7138422439000323e-06,
+      "max_residual_recurrence_max_abs": 7.277564344487786e-07,
+      "max_independent_matrix_e0_max_abs": 1.7682711281885588e-06,
+      "max_global_bias_sum_error": 6.183981895446777e-07,
+      "max_inverse_condition": 5.712839949338778,
+      "max_inverse_gain": 123.33333333333336
+    }
+  },
+  "minibatch": {
+    "float64": {
+      "cases": 30,
+      "max_p_relative_l2": 7.605936325688214e-16
+    },
+    "float32": {
+      "cases": 30,
+      "max_p_relative_l2": 3.0765991955224093e-07
+    }
+  },
+  "counterexamples": 5,
+  "conditioning_cases": 8,
+  "implementation_independence": "Initial implementation by an agent that did not read/import old attack or project source. Lead review corrected numerical assertions. No project code imported. PyTorch autograd oracle versus NumPy spectral and matrix-sum checks.",
+  "python": "3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.4.6",
+  "torch": "2.12.0+cpu",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "device": "cpu",
+  "sha256": {
+    "verify_math.py": "940e00f14470b489c7fb3a4b19313850130b0b9f51180fe55074d898bc38fd5b",
+    "config.json": "0d0c3443bef6a83f270eedd970e8e5a75eff6ebfbb5473a1e3a8df2be43a5005",
+    "full_batch_cases.csv": "a3de2c40603bd4e46fbc9f2dcd21b2e637f4910ea8635efff101b5249446202c",
+    "minibatch_cases.csv": "9bc8613004d2ebede831002e87a1e58c4eac19d38c121ecbb4b7e38e5957f8bb",
+    "conditioning_cases.csv": "098a213b5f4761b593e033a3ee7858d210c9ac19f495c3e890147854c3803fd8",
+    "counterexamples.json": "75565a5c39f0196d3a10bb7dac9247d4f6097925497d87c4268f88780558f3ba"
+  }
+}

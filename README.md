@@ -4,6 +4,8 @@ PyTorch simulator for partially local federated learning in recommender systems.
 
 The repository was prepared as a course project and an experimental playground for comparing FedRecon with baseline approaches, reconstruction budgets, client update budgets, quantization of global updates, client heterogeneity, and simulated client dropout.
 
+The [privacy checks](research/privacy/README.md) reproduce how much an individual client update can reveal under a fixed protocol. They include synthetic fixtures, a check against the historical simulator, and instructions for separating local inputs from reproducible code and results.
+
 ## Task
 
 The recommendation task is rating prediction on **MovieLens 1M**. Each user is treated as a federated client. For validation and test users, local ratings are split into:
@@ -50,7 +52,7 @@ Main observations:
 - Increasing the number of local client update steps improves quality for a fixed number of communication rounds, but increases client-side computation.
 - Moderate quantization of global deltas is effective in this simulation: int4 gives almost the same RMSE as full precision while reducing transmitted data strongly.
 - Sign-only compression is too aggressive and noticeably degrades RMSE.
-- FedRecon and the FedAvg-like global baseline are very close in the main setting; the centralized baseline remains better because it is trained without federated constraints.
+- FedRecon and the FedAvg-like global baseline have close errors in the main setting. The centralized reference has lower RMSE under a different training budget and data-access regime.
 
 ## Selected figures
 
@@ -80,14 +82,15 @@ results/final/           Selected final tables and figures committed to the repo
 notebooks/               Optional exploratory notebooks / Colab notes
 docs/                    Short experiment summary and project notes
 data/                    Local dataset directory, not committed
+research/privacy/        Privacy checks, run instructions and reference summaries
+runs/                    Local outputs for new research runs, not committed
 ```
 
 ## Installation
 
-Recommended on Windows PowerShell:
+Run from the repository root. In PowerShell:
 
 ```powershell
-cd C:\RFoE\CW_Project\fedrecon-course-mvp
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip

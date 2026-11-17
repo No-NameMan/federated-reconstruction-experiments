@@ -3,8 +3,10 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 
-data/ml-1m/
-data/ml-1m.zip
+# Local datasets and generated runs
+/data/*
+!/data/.gitkeep
+/runs/
 
 results/raw/
 results/processed/
@@ -15,3 +17,24 @@ reports/
 
 *.pt
 *.pth
+*.ckpt
+
+# Local archives, correspondence and prepared academic materials
+/.local/
+/CourseWork/
+/CW_Paper/
+/CW_Project/
+/CWG/
+/FEDRECON/
+/research/[0-9][0-9][0-9][0-9]-*/
+/research/.*/
+/research/README.md
+/research/environment-audit-*.md
+
+# Local credentials and generated bundles
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.zip

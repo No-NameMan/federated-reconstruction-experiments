@@ -1,0 +1,17 @@
+{
+  "description": "Independent synthetic verification of frozen-local MF message inversion; no historical attack code or trained checkpoint imported",
+  "seeds": [0, 1, 2, 3, 4],
+  "n_values": [1, 3, 11, 37],
+  "d_values": [1, 4, 13],
+  "step_values": [1, 2, 7, 20],
+  "dtypes": ["float64", "float32"],
+  "learning_rate": 0.15,
+  "p_standard_deviation": 0.3,
+  "minibatch_n": [3, 11],
+  "minibatch_steps": [1, 5, 19],
+  "rating_lower": 1,
+  "rating_upper": 5,
+  "singular_epsilon_values": [0.1, 0.001, 0.000001, 0.000000001],
+  "message_perturbation_l2": 1e-10,
+  "torch_threads": 1
+}

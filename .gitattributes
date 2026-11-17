@@ -1,0 +1,2 @@
+# Keep research source hashes stable across platforms.
+research/privacy/** text=auto eol=lf

@@ -1,0 +1,137 @@
+{
+  "coursework_git_revision": "02293ae3dd917ea0f45ceafc3f30facc4a7af982",
+  "environment": {
+    "python": "3.13.7",
+    "torch": "2.12.0+cpu",
+    "numpy": "2.4.6",
+    "threads": 1,
+    "device": "cpu"
+  },
+  "reference_rerun": {
+    "rounds": 100,
+    "seed": 42,
+    "test": {
+      "rmse": 1.0040168762207031,
+      "mae": 0.8090129494667053,
+      "accuracy": 0.37578266859054565,
+      "num_clients": 604,
+      "num_examples": 51426
+    },
+    "may_archive_test_metrics_equal": true,
+    "source": "2026-11-16 archived reference rerun final_metrics.json; matched to the May ZIP member for seed 42"
+  },
+  "checkpoint_ablation": {
+    "rows": [
+      {
+        "checkpoint": "results/raw/2026-05-26_19-48-04_sweep_fedrecon_strong_100r_v1__federated_client_dropout_prob_0p0__seed_42/final_model.pt",
+        "checkpoint_sha256": "49e6dbbf8fbb82f90f1079064c523df6a58bbe4b96721b978796ce5d4400366f",
+        "model_seed": 42,
+        "eval_rng_seed": 20261116,
+        "variant": "inherited_model",
+        "metrics": {
+          "rmse": 1.0039026737213135,
+          "mae": 0.8089227080345154,
+          "accuracy": 0.3766188323497772,
+          "num_clients": 604,
+          "num_examples": 51426
+        }
+      },
+      {
+        "checkpoint": "results/raw/2026-05-26_19-48-04_sweep_fedrecon_strong_100r_v1__federated_client_dropout_prob_0p0__seed_42/final_model.pt",
+        "checkpoint_sha256": "49e6dbbf8fbb82f90f1079064c523df6a58bbe4b96721b978796ce5d4400366f",
+        "model_seed": 42,
+        "eval_rng_seed": 20261116,
+        "variant": "zero_item_factors",
+        "metrics": {
+          "rmse": 1.00386381149292,
+          "mae": 0.8088706135749817,
+          "accuracy": 0.3764827251434326,
+          "num_clients": 604,
+          "num_examples": 51426
+        }
+      },
+      {
+        "checkpoint": "results/raw/2026-05-26_19-49-07_sweep_fedrecon_strong_100r_v1__federated_client_dropout_prob_0p0__seed_43/final_model.pt",
+        "checkpoint_sha256": "b91f902b687c0b077a8e2f4a45dced2e9b7bbc2c11353829e5e44c099e06c099",
+        "model_seed": 43,
+        "eval_rng_seed": 20261116,
+        "variant": "inherited_model",
+        "metrics": {
+          "rmse": 1.0038084983825684,
+          "mae": 0.8088631629943848,
+          "accuracy": 0.3758993446826935,
+          "num_clients": 604,
+          "num_examples": 51426
+        }
+      },
+      {
+        "checkpoint": "results/raw/2026-05-26_19-49-07_sweep_fedrecon_strong_100r_v1__federated_client_dropout_prob_0p0__seed_43/final_model.pt",
+        "checkpoint_sha256": "b91f902b687c0b077a8e2f4a45dced2e9b7bbc2c11353829e5e44c099e06c099",
+        "model_seed": 43,
+        "eval_rng_seed": 20261116,
+        "variant": "zero_item_factors",
+        "metrics": {
+          "rmse": 1.003741979598999,
+          "mae": 0.8087506294250488,
+          "accuracy": 0.37584102153778076,
+          "num_clients": 604,
+          "num_examples": 51426
+        }
+      },
+      {
+        "checkpoint": "results/raw/2026-05-26_19-50-05_sweep_fedrecon_strong_100r_v1__federated_client_dropout_prob_0p0__seed_44/final_model.pt",
+        "checkpoint_sha256": "4ba161b1519d0b53003d4821dab0df139242a6be7aa1ed060e1fc7974cdc7570",
+        "model_seed": 44,
+        "eval_rng_seed": 20261116,
+        "variant": "inherited_model",
+        "metrics": {
+          "rmse": 1.002681016921997,
+          "mae": 0.8083966374397278,
+          "accuracy": 0.37591880559921265,
+          "num_clients": 604,
+          "num_examples": 51426
+        }
+      },
+      {
+        "checkpoint": "results/raw/2026-05-26_19-50-05_sweep_fedrecon_strong_100r_v1__federated_client_dropout_prob_0p0__seed_44/final_model.pt",
+        "checkpoint_sha256": "4ba161b1519d0b53003d4821dab0df139242a6be7aa1ed060e1fc7974cdc7570",
+        "model_seed": 44,
+        "eval_rng_seed": 20261116,
+        "variant": "zero_item_factors",
+        "metrics": {
+          "rmse": 1.0026352405548096,
+          "mae": 0.8083263635635376,
+          "accuracy": 0.3766966164112091,
+          "num_clients": 604,
+          "num_examples": 51426
+        }
+      }
+    ],
+    "source": "2026-11-16 diagnostics.json, checkpoint_ablations"
+  },
+  "smoke": {
+    "rounds": 2,
+    "test": {
+      "rmse": 2.397763967514038,
+      "mae": 2.2373507022857666,
+      "accuracy": 0.03667953610420227,
+      "num_clients": 5,
+      "num_examples": 518
+    },
+    "source": "2026-11-17 supervisor demo-01/summary.json"
+  },
+  "pilot": {
+    "clients": 30,
+    "query_pairs": 2153,
+    "exact_items_clients": 30,
+    "exact_relative_clients": 30,
+    "unique_absolute_clients": 18,
+    "max_p_relative_l2": 3.6893675253930375e-07,
+    "max_shifted_rating_error": 4.723005031515015e-06,
+    "checkpoint_member": "results/raw/2026-05-26_19-48-04_sweep_fedrecon_strong_100r_v1__federated_client_dropout_prob_0p0__seed_42/final_model.pt",
+    "checkpoint_sha256": "49e6dbbf8fbb82f90f1079064c523df6a58bbe4b96721b978796ce5d4400366f",
+    "source": "2026-11-17 supervisor demo-01/summary.json; independent decoder; original client"
+  },
+  "ratings_sha256": "506d64ca44484487c11dc2d9a28de5c54948213e6b96285e298afe28d6ea4e0f",
+  "may_archive_sha256": "8f9890e2f275b69015aec2e63b5d42874d7339fbdc7c608548672c5ec522e248"
+}
