@@ -25,12 +25,12 @@ python research/privacy/run_movielens.py smoke --data-dir data --output runs/pri
 python research/privacy/run_movielens.py reference --data-dir data --output runs/privacy/reference
 ~~~
 
-These training and replay modes require the simulator and debug config from [coursework revision 02293ae](https://github.com/No-NameMan/federated-reconstruction-experiments/tree/02293ae3dd917ea0f45ceafc3f30facc4a7af982). The default is the main checkout while those files still match. If the simulator has changed, use `git worktree add --detach .local/coursework-baseline 02293ae`, then pass `--repo .local/coursework-baseline`. The output records the checkout and baseline revisions. Existing output directories are rejected.
+These training and replay modes require the simulator and debug config from [coursework revision 02293ae](https://github.com/No-NameMan/federated-reconstruction-experiments/tree/02293ae3dd917ea0f45ceafc3f30facc4a7af982). The default is the main checkout while those files still match. If the simulator has changed, use `git worktree add --detach ../fedrecon-baseline 02293ae`, then pass `--repo ../fedrecon-baseline`. The output records the checkout and baseline revisions. Existing output directories are rejected.
 
 The optional `pilot` mode also requires the original May `final_model.pt` checkpoint, available separately from the author. Its archive member and SHA-256 are recorded in [reference/observed.json](reference/observed.json).
 
 ~~~sh
-python research/privacy/run_movielens.py pilot --data-dir data --checkpoint .local/final_model.pt --output runs/privacy/pilot
+python research/privacy/run_movielens.py pilot --data-dir data --checkpoint data/final_model.pt --output runs/privacy/pilot
 ~~~
 
 Expected pilot outcomes are 2,153 query pairs, 30/30 exact relative rating vectors and 18/30 unique correct absolute rating vectors within the query-stage model. The reference checkpoint and dataset are kept outside Git. Training a new checkpoint serves as a separate quality comparison.
@@ -42,4 +42,6 @@ Expected pilot outcomes are 2,153 query pairs, 30/30 exact relative rating vecto
 - [Saved synthetic numerical results](reference/synthetic_summary.json)
 - [MovieLens reference, ablation and pilot summaries](reference/observed.json) and [smoke-run log by round](reference/training_smoke_rounds.csv)
 
-The theorem and the diagnostics concern an individual message under the declared protocol. Population exposure, secure aggregation and constraints imposed by support reconstruction require separate analysis.
+The hashes in the saved synthetic summaries identify the source snapshot available at [revision 20a0dc7](https://github.com/No-NameMan/federated-reconstruction-experiments/tree/20a0dc7c2e294acd70d64333a85a02af3c4902fe/research/privacy/independent_math). The current verification code changes only the accompanying description in its generated summary. The saved metrics and source hashes retain their original values.
+
+The reconstruction results concern an individual message under the declared protocol. Population exposure, secure aggregation and constraints imposed by support reconstruction require separate analysis.

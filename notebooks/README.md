@@ -1,15 +1,6 @@
 # Notebooks
 
-This project keeps the main implementation in `src/`, `scripts/` and `configs/`. Notebooks are optional and are intended only for exploration, Colab orchestration or compact result overviews.
-
-Recommended notebook usage:
-
-```text
-notebooks/
-  01_results_overview.ipynb   # optional: reads final CSV files and reproduces selected plots
-```
-
-The repository is fully usable without notebooks. Experiments are launched from CLI scripts, and final public artifacts are stored in `results/final/`.
+The CLI scripts in `scripts/` run the experiments from YAML configurations in `configs/`. The published CSV tables and figures are available in [results/final](../results/final/README.md).
 
 ## Typical CLI workflow
 

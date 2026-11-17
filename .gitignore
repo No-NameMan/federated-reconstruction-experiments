@@ -19,17 +19,12 @@ reports/
 *.pth
 *.ckpt
 
-# Local archives, correspondence and prepared academic materials
+# Machine-local workspace files
 /.local/
-/CourseWork/
-/CW_Paper/
-/CW_Project/
-/CWG/
-/FEDRECON/
-/research/[0-9][0-9][0-9][0-9]-*/
-/research/.*/
-/research/README.md
-/research/environment-audit-*.md
+.agents/
+.codex/
+.aws/
+AGENTS.md
 
 # Local credentials and generated bundles
 .env

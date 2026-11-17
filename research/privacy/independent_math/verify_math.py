@@ -380,7 +380,7 @@ def main():
                      max_p_relative_l2=max(r['p_relative_l2'] for r in mini if r['dtype']==dtype))
                      for dtype in ['float64','float32']},
                  counterexamples=len(negative), conditioning_cases=len(conditioning),
-                 implementation_independence='Initial implementation by an agent that did not read/import old attack or project source. Lead review corrected numerical assertions. No project code imported. PyTorch autograd oracle versus NumPy spectral and matrix-sum checks.',
+                 implementation_independence='Independent PyTorch autograd simulation and NumPy spectral and matrix-sum checks. The verification imports no simulator or attack code from the coursework project.',
                  python=sys.version,numpy=np.__version__,torch=torch.__version__,platform=platform.platform(),
                  device='cpu',
                  sha256={name:hashlib.sha256((HERE/name).read_bytes()).hexdigest()

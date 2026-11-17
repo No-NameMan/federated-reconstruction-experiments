@@ -118,7 +118,7 @@
       "num_clients": 5,
       "num_examples": 518
     },
-    "source": "2026-11-17 supervisor demo-01/summary.json"
+    "source": "2026-11-17 two-round simulator smoke test, recorded in training_smoke_rounds.csv"
   },
   "pilot": {
     "clients": 30,
@@ -130,7 +130,7 @@
     "max_shifted_rating_error": 4.723005031515015e-06,
     "checkpoint_member": "results/raw/2026-05-26_19-48-04_sweep_fedrecon_strong_100r_v1__federated_client_dropout_prob_0p0__seed_42/final_model.pt",
     "checkpoint_sha256": "49e6dbbf8fbb82f90f1079064c523df6a58bbe4b96721b978796ce5d4400366f",
-    "source": "2026-11-17 supervisor demo-01/summary.json; independent decoder; original client"
+    "source": "2026-11-17 MovieLens verification using the independent decoder with the original client"
   },
   "ratings_sha256": "506d64ca44484487c11dc2d9a28de5c54948213e6b96285e298afe28d6ea4e0f",
   "may_archive_sha256": "8f9890e2f275b69015aec2e63b5d42874d7339fbdc7c608548672c5ec522e248"

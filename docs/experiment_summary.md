@@ -79,10 +79,4 @@ A separate no-bias configuration used embedding dimension 50, minibatch size 5 a
 - Moderate update quantization, especially int4, is promising for reducing communication in this simulation.
 - The current experiments are limited by the simplified MovieLens setup and an idealized communication model.
 
-## Future work
-
-- Adaptive reconstruction budgets based on the number of local ratings.
-- More realistic communication and client availability models.
-- Differential privacy.
-- Larger recommendation datasets.
-- Additional server optimizers and personalization baselines.
+The comparisons cover the saved configurations and an idealized communication model. They provide no formal privacy guarantee.
